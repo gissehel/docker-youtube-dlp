@@ -22,7 +22,7 @@ jobs:
               id: vars
               run: |
                   echo "::set-output name=GITHUB_SHA_SHORT::$(echo ${GITHUB_SHA} | cut -c1-8)"
-                  echo "::set-output name=IMAGE_NAME::$(echo \"ghcr.io/${{ secrets.CR_USER }}/youtube-dl\")"
+                  echo "::set-output name=IMAGE_NAME::$(echo "ghcr.io/${{ secrets.CR_USER }}/youtube-dl")"
 
             - name: 'Login to github container registry'
               uses: docker/login-action@v1
