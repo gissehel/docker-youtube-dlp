@@ -1,9 +1,10 @@
 FROM alpine:3.13
 
 RUN set -x \
- && apk add --no-cache ca-certificates curl ffmpeg python gnupg \
+ && apk add --no-cache ca-certificates curl ffmpeg python3 gnupg \
     # Install youtube-dl
     # https://github.com/rg3/youtube-dl
+ && ln -s python3 /usr/bin/python \
  && curl -Lo /usr/local/bin/youtube-dl https://yt-dl.org/downloads/latest/youtube-dl \
  && curl -Lo youtube-dl.sig https://yt-dl.org/downloads/latest/youtube-dl.sig \
  && gpg --keyserver keyserver.ubuntu.com --recv-keys '7D33D762FD6C35130481347FDB4B54CBA4826A18' \
@@ -18,7 +19,7 @@ RUN set -x \
  && chmod a+rw /downloads \
     # Basic check it works.
  && youtube-dl --version \
- && mkdir /.cache \
+ && mkdir -p /.cache \
  && chmod 777 /.cache
 
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
