@@ -15,26 +15,36 @@ jobs:
         name: 'Build'
         runs-on: ubuntu-latest
         steps:
-          - name: "Checkout"
-            uses: actions/checkout@v2
+            - name: "Checkout"
+              uses: actions/checkout@v2
 
-          - name: "Set GITHUB_SHA_SHORT env var"
-            id: github_sha_short
-            run: echo "::set-output name=GITHUB_SHA_SHORT::$(echo ${GITHUB_SHA} | cut -c1-8)"
+            - name: "Set GITHUB_SHA_SHORT env var"
+              id: vars
+              run: |
+                  echo "::set-output name=GITHUB_SHA_SHORT::$(echo ${GITHUB_SHA} | cut -c1-8)"
+                  echo "::set-output name=IMAGE_NAME::$(echo \"ghcr.io/${{ secrets.CR_USER }}/youtube-dl\")"
 
-          - name: 'Login to github container registry'
-            uses: docker/login-action@v1
-            with:
-                registry: ghcr.io
-                username: ${{ secrets.CR_USER }}
-                password: ${{ secrets.CR_PAT }}
+            - name: 'Login to github container registry'
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ secrets.CR_USER }}
+                  password: ${{ secrets.CR_PAT }}
 
-          - name: "Build image youtube-dl ${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}"
-            uses: docker/build-push-action@v2
-            with:
-                registry: ghcr.io
-                username: ${{ secrets.CR_USER }}
-                password: ${{ secrets.CR_PAT }}
-                push: true
-                no-cache: true
-                tags: ghcr.io/${{ secrets.CR_USER }}/youtube-dl:latest,ghcr.io/${{ secrets.CR_USER }}/youtube-dl:${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}
+            - name: "Build image youtube-dl ${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
+              uses: docker/build-push-action@v2
+              with:
+                  push: true
+                  no-cache: true
+                  tags: ${{ steps.vars.outputs.IMAGE_NAME }}:latest,${{ steps.vars.outputs.IMAGE_NAME }}:${{ steps.vars.outputs.GITHUB_SHA_SHORT }}
+
+            - name: "Tag using version"
+              run: |
+                  VERSION=$(docker run --rm=true -i "${{ steps.vars.outputs.IMAGE_NAME }}:latest" --version)
+                  docker tag "${{ steps.vars.outputs.IMAGE_NAME }}:latest" "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}"
+                  docker tag "${{ steps.vars.outputs.IMAGE_NAME }}:latest" "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}-${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
+                  docker push "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}"
+                  docker push "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}-${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
+
+
+
