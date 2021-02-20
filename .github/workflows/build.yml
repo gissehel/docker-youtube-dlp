@@ -1,17 +1,21 @@
 name: 'build'
 
 on:
-  push:
-    branches:
-    - master
-  pull_request:
+    push:
+        branches:
+            - master
+
+    schedule:
+        - cron: "59 01 * * 5"
+
+    pull_request:
 
 jobs:
     build:
         name: 'Build'
         runs-on: ubuntu-latest
         steps:
-          - name: "Build:checkout"
+          - name: "Checkout"
             uses: actions/checkout@v2
 
           - name: "Set GITHUB_SHA_SHORT env var"
@@ -25,11 +29,12 @@ jobs:
                 username: ${{ secrets.CR_USER }}
                 password: ${{ secrets.CR_PAT }}
 
-          - name: 'Build image youtube-dl ${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}'
+          - name: "Build image youtube-dl ${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}"
             uses: docker/build-push-action@v2
             with:
                 registry: ghcr.io
                 username: ${{ secrets.CR_USER }}
                 password: ${{ secrets.CR_PAT }}
                 push: true
-                tags: ghcr.io/${{ secrets.CR_USER }}/youtube-dl:latest
+                no-cache: true
+                tags: ghcr.io/${{ secrets.CR_USER }}/youtube-dl:latest,ghcr.io/${{ secrets.CR_USER }}/youtube-dl:${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}
