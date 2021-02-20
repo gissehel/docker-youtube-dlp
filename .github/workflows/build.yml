@@ -1,0 +1,28 @@
+name: 'build'
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+    build:
+        name: 'Build'
+        runs-on: ubuntu-latest
+        steps:
+          - name: "Build:checkout"
+            uses: actions/checkout@v2
+
+          - name: "Set GITHUB_SHA_SHORT env var"
+            id: github_sha_short
+            run: echo "::set-output name=GITHUB_SHA_SHORT::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+          - name: 'Build image youtube-dl ${{ steps.github_sha_short.outputs.GITHUB_SHA_SHORT }}'
+            uses: docker/build-push-action@v2
+            with:
+                registry: ghcr.io
+                username: ${{ secrets.CR_USER }}
+                password: ${{ secrets.CR_PAT }}
+                push: true
+                tags: ghcr.io/${{ secrets.CR_USER }}/youtube-dl:latest
