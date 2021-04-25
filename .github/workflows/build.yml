@@ -18,12 +18,12 @@ jobs:
             - name: "Checkout"
               uses: actions/checkout@v2
 
-            - name: "Set GITHUB_SHA_SHORT env var"
+            - name: "Set environment variables"
               id: vars
               run: |
-                  echo "::set-output name=GITHUB_SHA_SHORT::$(echo ${GITHUB_SHA} | cut -c1-8)"
-                  echo "::set-output name=IMAGE_NAME::$(echo "ghcr.io/${{ secrets.CR_USER }}/youtube-dl")"
-                  echo "::set-output name=BUILD_DATE::$(TZ=Europe/Paris date -Iseconds)"
+                  echo "GITHUB_SHA_SHORT=$(echo ${GITHUB_SHA} | cut -c1-8)" >> "${GITHUB_ENV}"
+                  echo "IMAGE_NAME=$(echo "ghcr.io/${{ secrets.CR_USER }}/youtube-dl")" >> "${GITHUB_ENV}"
+                  echo "BUILD_DATE=$(TZ=Europe/Paris date -Iseconds)" >> "${GITHUB_ENV}"
 
             - name: 'Login to github container registry'
               uses: docker/login-action@v1
@@ -32,23 +32,23 @@ jobs:
                   username: ${{ secrets.CR_USER }}
                   password: ${{ secrets.CR_PAT }}
 
-            - name: "Build image youtube-dl ${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
+            - name: "Build image youtube-dl ${{ env.GITHUB_SHA_SHORT }}"
               uses: docker/build-push-action@v2
               with:
                   push: true
                   no-cache: true
                   build-args: |
-                      VCS_REF=${{ steps.vars.outputs.GITHUB_SHA_SHORT }}
-                      BUILD_DATE=${{ steps.vars.outputs.BUILD_DATE }}
-                  tags: ${{ steps.vars.outputs.IMAGE_NAME }}:latest,${{ steps.vars.outputs.IMAGE_NAME }}:${{ steps.vars.outputs.GITHUB_SHA_SHORT }}
+                      VCS_REF=${{ env.GITHUB_SHA_SHORT }}
+                      BUILD_DATE=${{ env.BUILD_DATE }}
+                  tags: ${{ env.IMAGE_NAME }}:latest,${{ env.IMAGE_NAME }}:${{ env.GITHUB_SHA_SHORT }}
 
             - name: "Tag using version"
               run: |
-                  VERSION=$(docker run --rm=true -i "${{ steps.vars.outputs.IMAGE_NAME }}:latest" --version)
-                  docker tag "${{ steps.vars.outputs.IMAGE_NAME }}:latest" "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}"
-                  docker tag "${{ steps.vars.outputs.IMAGE_NAME }}:latest" "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}-${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
-                  docker push "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}"
-                  docker push "${{ steps.vars.outputs.IMAGE_NAME }}:${VERSION}-${{ steps.vars.outputs.GITHUB_SHA_SHORT }}"
+                  VERSION=$(docker run --rm=true -i "${{ env.IMAGE_NAME }}:latest" --version)
+                  docker tag "${{ env.IMAGE_NAME }}:latest" "${{ env.IMAGE_NAME }}:${VERSION}"
+                  docker tag "${{ env.IMAGE_NAME }}:latest" "${{ env.IMAGE_NAME }}:${VERSION}-${{ env.GITHUB_SHA_SHORT }}"
+                  docker push "${{ env.IMAGE_NAME }}:${VERSION}"
+                  docker push "${{ env.IMAGE_NAME }}:${VERSION}-${{ env.GITHUB_SHA_SHORT }}"
 
 
 
