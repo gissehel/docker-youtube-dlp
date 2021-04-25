@@ -1,24 +1,5 @@
 FROM alpine:3.13
 
-LABEL \
-      org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.authors="gissehel" \
-      org.opencontainers.image.url="https://github.com/gissehel/docker-youtube-dl" \
-      org.opencontainers.image.source="https://github.com/gissehel/docker-youtube-dl" \
-      org.opencontainers.image.version="" \
-      org.opencontainers.image.revision="${VCS_REF}" \
-      org.opencontainers.image.vendor="gissehel" \
-      org.opencontainers.image.ref.name="ghcr.io/gissehel/youtube-dl" \
-      org.opencontainers.image.title="youtube-dl" \
-      org.opencontainers.image.description="Image for youtube-dl" \
-      org.label-schema.build-date="${BUILD_DATE}" \
-      org.label-schema.vcs-ref="${VCS_REF}" \
-      org.label-schema.name="youtube-dl" \
-      org.label-schema.version="" \
-      org.label-schema.vendor="gissehel" \
-      org.label-schema.vcs-url="https://github.com/gissehel/docker-youtube-dl" \
-      org.label-schema.schema-version="1.0"
-
 RUN set -x \
  && apk add --no-cache ca-certificates curl ffmpeg python3 gnupg \
     # Install youtube-dl
