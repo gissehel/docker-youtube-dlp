@@ -17,10 +17,10 @@ Based on [https://github.com/wernight/docker-youtube-dl](https://github.com/wern
 How to use this image
 =====================
 
-    $ docker run --rm --user $UID:$GID -v $PWD:/downloads ghcr.io/gissehel/youtube-dl <video_url>
+    $ docker run --rm --user $(id -u):$(id -g) -v $(pwd):/downloads ghcr.io/gissehel/youtube-dl <video_url>
 
-  * `--user $UID:$GID` is to run as your current user, and not `root`.
-  * `-v $PWD:/downloads` is to store downloaded files in the current working directory.
+  * `--user $(id -u):$(id -g)` is to run as your current user, and not `root`.
+  * `-v $(pwd):/downloads` is to store downloaded files in the current working directory.
   * `<video_url>` is the ID of a YouTube video or other arguments to pass to `youtube-dl`.
 
 Note: The entrypoint is set to `youtube-dl`, so do *not* put `youtube-dl` again as argument.
