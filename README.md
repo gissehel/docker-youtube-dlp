@@ -25,6 +25,13 @@ How to use this image
 
 Note: The entrypoint is set to `youtube-dl`, so do *not* put `youtube-dl` again as argument.
 
+Usage as bash function
+----------------------
+
+    ydl() {
+        docker run --rm --user $(id -u):$(id -g) -v $(pwd):/downloads ghcr.io/gissehel/youtube-dl "${@}"
+    }
+
 Features of this image
 ----------------------
 
