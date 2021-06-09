@@ -36,9 +36,6 @@ jobs:
               with:
                   push: false
                   no-cache: true
-                  build-args: |
-                      VCS_REF=${{ env.GITHUB_SHA_SHORT }}
-                      BUILD_DATE=${{ env.BUILD_DATE }}
                   tags: builder:latest
 
             - name: "Set VERSION as env"
