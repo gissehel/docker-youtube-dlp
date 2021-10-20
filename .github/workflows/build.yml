@@ -23,7 +23,7 @@ jobs:
             - name: "Set environment variables"
               run: |
                   echo "GITHUB_SHA_SHORT=$(echo ${GITHUB_SHA} | cut -c1-8)" >> "${GITHUB_ENV}"
-                  echo "IMAGE_NAME=$(echo ghcr.io/${{ secrets.CR_USER }}/youtube-dl)" >> "${GITHUB_ENV}"
+                  echo "IMAGE_NAME=$(echo ghcr.io/${{ secrets.CR_USER }}/youtube-dlp)" >> "${GITHUB_ENV}"
                   echo "BUILD_DATE=$(TZ=Europe/Paris date -Iseconds)" >> "${GITHUB_ENV}"
 
             - name: 'Login to github container registry'
@@ -44,7 +44,7 @@ jobs:
               run: |
                   echo "VERSION=$(docker run --rm=true -i builder:latest --version)" >> "${GITHUB_ENV}"
 
-            - name: "Build image youtube-dl ${{ env.GITHUB_SHA_SHORT }} (for version ${{ env.VERSION }})"
+            - name: "Build image youtube-dlp ${{ env.GITHUB_SHA_SHORT }} (for version ${{ env.VERSION }})"
               uses: docker/build-push-action@v2
               with:
                   push: true
