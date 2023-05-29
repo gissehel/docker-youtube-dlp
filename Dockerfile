@@ -3,7 +3,6 @@ FROM alpine:latest
 RUN set -x \
  && apk add --no-cache ca-certificates curl ffmpeg python3 \
     # Install youtube-dlp
- && ln -s python3 /usr/bin/python \
  && curl -Lo /usr/local/bin/youtube-dl https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp \
  && chmod a+rx /usr/local/bin/youtube-dl \
     # Clean-up
