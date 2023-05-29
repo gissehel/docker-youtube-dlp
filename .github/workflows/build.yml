@@ -37,7 +37,7 @@ jobs:
           export_ga GH_OWNER="${{ github.repository_owner }}"
           export_ga REPO_NAME="${{ github.event.repository.name }}"
           
-          export_ga GH_IMAGE_NAME="${GH_REGISTRY}/${GH_OWNER}/${REPO_NAME}"
+          export_ga GH_IMAGE_NAME="${GH_REGISTRY}/${GH_OWNER}/${REPO_NAME#docker-*}"
 
           export_ga BUILD_DATE="$(TZ=Europe/Paris date -Iseconds)"
 
