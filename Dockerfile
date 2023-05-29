@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:latest
 
 RUN set -x \
  && apk add --no-cache ca-certificates curl ffmpeg python3 \
