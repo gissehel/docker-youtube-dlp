@@ -4,7 +4,6 @@ ARG BUILD_DATE=now
 ARG VCS_REF=none
 ARG VERSION=not-specified
 
-
 LABEL \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.authors="gissehel" \
